@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.coldrain.hotel_isu.mapper.booking.BookingMapper">
+
+    <select id="findByReservationNotPossibleRoom" resultType="edu.coldrain.hotel_isu.domain.booking.Booking">
+        <![CDATA[
+        SELECT B.BOOKCODE,
+               B.ROOMCODE,
+               B.NAME,
+               RT.NAME "TYPENAME",
+               B.CHECKIN,
+               B.CHECKOUT,
+               B.TOTAL,
+               B.MOBILE
+        FROM BOOKING B,
+             ROOM R
+                 INNER JOIN ROOMTYPE RT ON R.TYPE = RT.TYPECODE
+        WHERE B.CHECKOUT > #{checkin}
+          AND B.CHECKIN < #{checkout}
+          AND B.ROOMCODE = R.ROOMCODE
+        ORDER BY B.CHECKIN
+        ]]>
+    </select>
+
+    <select id="findByReservationPossibleRoom"
+            resultType="edu.coldrain.hotel_isu.domain.booking.ReservationPossibleRoom">
+        <![CDATA[
+        SELECT R.ROOMCODE, R.NAME, R.HOWMANY, R.HOWMUCH, RT.NAME "TYPENAME"
+        FROM ROOM R
+                 INNER JOIN ROOMTYPE RT ON R.TYPE = RT.TYPECODE
+        WHERE ROOMCODE IN (
+            SELECT ROOMCODE
+            FROM ROOM
+            MINUS
+            SELECT DISTINCT ROOMCODE
+            FROM BOOKING
+            WHERE CHECKOUT > #{checkin}
+              AND CHECKIN < #{checkout}
+        )
+        ORDER BY R.ROOMCODE DESC
+        ]]>
+
+    </select>
+
+    <insert id="insert">
+        INSERT INTO BOOKING(BOOKCODE, ROOMCODE, CHECKIN, CHECKOUT, NAME, TOTAL, MOBILE)
+        VALUES (SEQ_BOOKING.NEXTVAL, #{roomCode}, #{checkin}, #{checkout}, #{name}, #{total}, #{mobile})
+    </insert>
+
+    <update id="update">
+        UPDATE BOOKING
+        SET MOBILE = #{mobile}
+        WHERE NAME = #{name}
+    </update>
+
+    <delete id="delete">
+        DELETE
+        FROM BOOKING
+        WHERE NAME = #{name}
+    </delete>
+
+</mapper>

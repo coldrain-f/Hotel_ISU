@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" th:href="@{/css/bulma.css}" href="../css/bulma.css">
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <title>로그인 성공</title>
+</head>
+<body>
+<div class="container">
+    <div class="box">
+        <h3 class="title is-3 has-text-centered">회원가입 성공</h3>
+        <p th:text="|이름: ${user.name}|">사용자 이름</p>
+        <p th:text="|아이디: ${user.id}"|>사용자 아이디</p>
+        <p th:text="|비밀번호: ${user.password}|">사용자 비밀번호</p>
+        <p th:text="|비밀번호 확인: ${user.passwordCheck}|">사용자 비밀번호 확인</p>
+        <p th:text="|핸드폰 번호: ${user.mobile}|">사용자 핸드폰 번호</p>
+        <div class="buttons is-justify-content-flex-end">
+            <button class="button is-primary" onclick="location.href='/'">돌아가기</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

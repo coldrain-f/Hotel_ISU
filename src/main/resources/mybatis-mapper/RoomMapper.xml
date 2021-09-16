@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.coldrain.hotel_isu.mapper.room.RoomMapper">
+
+    <select id="findByAll" resultType="edu.coldrain.hotel_isu.domain.room.Room">
+        SELECT R.ROOMCODE, R.NAME, R.HOWMANY, R.HOWMUCH, RT.NAME ROOMTYPE
+        FROM ROOM R
+                 INNER JOIN ROOMTYPE RT ON R.TYPE = RT.TYPECODE
+        ORDER BY R.ROOMCODE DESC
+    </select>
+
+    <insert id="insert">
+        INSERT INTO ROOM(ROOMCODE, NAME, TYPE, HOWMANY, HOWMUCH)
+        VALUES (SEQ_ROOM.NEXTVAL, #{name}, #{type}, #{howMany}, #{howMuch})
+    </insert>
+
+    <update id="update">
+        UPDATE ROOM
+        SET NAME    = #{name},
+            TYPE    = #{type},
+            HOWMUCH = #{howMuch},
+            HOWMANY = #{howMany}
+        WHERE ROOMCODE = #{roomCode}
+    </update>
+
+    <delete id="delete">
+        DELETE
+        FROM ROOM
+        WHERE ROOMCODE = #{roomCode}
+    </delete>
+</mapper>

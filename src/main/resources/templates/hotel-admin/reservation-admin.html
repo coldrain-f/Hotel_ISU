@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" th:href="@{/css/bulma.css}">
+    <link rel="stylesheet" th:href="@{/css/font.css}">
+
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css}">
+
+    <script th:src="@{https://code.jquery.com/jquery-latest.min.js}"></script>
+    <script th:src="@{https://kit.fontawesome.com/223e8d4ffc.js}" crossorigin="anonymous"></script>
+    <title>예약 관리</title>
+</head>
+<body>
+<!-- container -->
+<div class="container">
+    <!-- nav -->
+    <nav class="navbar is-white">
+        <div class="navbar-brand">
+            <a href="#" class="navbar-item has-text-weight-bold">
+                아이리스
+            </a>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a th:href="@{/hotel/admin/room}" href="#"
+                   class="navbar-item has-text-weight-bold">객실 관리</a>
+                <a th:href="@{/hotel/admin/reservation}" href="#"
+                   class="navbar-item has-text-link has-text-weight-bold">예약 관리</a>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <form th:action="@{/home/logout}" th:method="post">
+                            <button class="button is-info is-rounded is-inverted has-text-weight-bold">로그아웃</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- //nav -->
+
+    <div class="box mt-5 has-background-white-bis">
+
+        <div class="columns">
+            <div class="column" id="box1">
+                <div class="box">
+                    <div class="tabs">
+                        <ul>
+                            <li class="is-active"><a href="#" class="tab1">예약 가능한 객실</a></li>
+                            <li><a href="#" class="tab2">예약된 객실</a></li>
+                        </ul>
+                    </div>
+                    <div class="message is-link">
+                        <div class="message-header">
+                            <p>예약 가능한 객실</p>
+                        </div>
+                        <div class="message-body">
+                            <table class="table is-hoverable is-fullwidth" id="reservationPossibleRoomTable">
+                                <thead>
+                                <tr>
+                                    <th>객실 번호</th>
+                                    <th>객실 이름</th>
+                                    <th>객실 유형</th>
+                                    <th>최대 인원</th>
+                                    <th>1박 비용</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <nav class="pagination is-centered is-rounded">
+                        <a href="#" class="pagination-previous">이전</a>
+                        <a href="#" class="pagination-next">다음</a>
+                        <ul class="pagination-list">
+                            <li><a href="#" class="pagination-link is-current">1</a></li>
+                            <li><a href="#" class="pagination-link">2</a></li>
+                            <li><a href="#" class="pagination-link">3</a></li>
+                            <li><a href="#" class="pagination-link">4</a></li>
+                            <li><a href="#" class="pagination-link">5</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="column is-hidden" id="box2">
+                <div class="box">
+                    <div class="tabs">
+                        <ul>
+                            <li class="is-active"><a href="#" class="tab1">예약 가능한 객실</a></li>
+                            <li><a href="#" class="tab2">예약된 객실</a></li>
+                        </ul>
+                    </div>
+                    <script>
+                        $(document).ready(function () {
+                            $(".tab1").on("click", function () {
+                                console.log(".tab2 클릭");
+                                $("#box2").addClass("is-hidden");
+                                $("#box1").removeClass("is-hidden");
+
+                                $(".tab2").parent().removeClass("is-active");
+                                $(".tab1").parent().addClass("is-active");
+
+                                return false;
+                            });
+
+                            $(".tab2").on("click", function () {
+                                console.log(".tab2 클릭");
+                                $("#box1").addClass("is-hidden");
+                                $("#box2").removeClass("is-hidden");
+
+                                $(".tab1").parent().removeClass("is-active");
+                                $(".tab2").parent().addClass("is-active");
+
+                                return false;
+                            });
+                        });
+                    </script>
+                    <div class="message is-link">
+                        <div class="message-header">
+                            <p>예약된 객실</p>
+                        </div>
+                        <div class="message-body">
+                            <table class="table is-hoverable is-fullwidth" id="booking">
+                                <thead>
+                                <tr>
+                                    <th>객실 이름</th>
+                                    <th>객실 유형</th>
+                                    <th>체크인 날짜</th>
+                                    <th>체크아웃 날짜</th>
+                                    <th>결제 비용</th>
+                                    <th>핸드폰 번호</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <nav class="pagination is-centered is-rounded">
+                        <a href="#" class="pagination-previous">이전</a>
+                        <a href="#" class="pagination-next">다음</a>
+                        <ul class="pagination-list">
+                            <li><a href="#" class="pagination-link is-current">1</a></li>
+                            <li><a href="#" class="pagination-link">2</a></li>
+                            <li><a href="#" class="pagination-link">3</a></li>
+                            <li><a href="#" class="pagination-link">4</a></li>
+                            <li><a href="#" class="pagination-link">5</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column" id="search">
+                <div class="box">
+                    <div class="tabs">
+                        <ul>
+                            <li class="is-active"><a href="#" class="searchTab">객실 검색</a></li>
+                            <li><a href="#" class="reservationTab">객실 예약</a></li>
+                            <li><a href="#" class="reservationModifyTab">예약 수정</a></li>
+                            <li><a href="#" class="reservationCancelTab">예약 취소</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- 탭 변환 이벤트 리스너 -->
+                    <script>
+                        $(document).ready(function () {
+                            /**
+                             * 객실 검색탭 클릭 이벤트 리스너
+                             */
+                            $(".searchTab").on("click", function () {
+                                $("#search").removeClass("is-hidden");
+                                $("#reservation").addClass("is-hidden");
+
+                                $(".reservationCancelTab").parent().removeClass("is-active");
+                                $(".reservationModifyTab").parent().removeClass("is-active");
+                                $(".reservationTab").parent().removeClass("is-active");
+                                $(".searchTab").parent().addClass("is-active");
+                                return false;
+                            });
+
+                            /**
+                             * 객실 예약탭 클릭 이벤트 리스너
+                             */
+                            $(".reservationTab").on("click", function (event) {
+                                $("#reservation").removeClass("is-hidden");
+                                $("#search").addClass("is-hidden");
+
+                                $(".reservationCancelTab").parent().removeClass("is-active");
+                                $(".reservationModifyTab").parent().removeClass("is-active");
+                                $(".searchTab").parent().removeClass("is-active");
+                                $(".reservationTab").parent().addClass("is-active");
+
+                                //버튼 레이블 변경
+                                $("#eventButton").text("예약");
+
+                                $("#roomCode").removeClass("is-hidden");
+                                $("#howMany").removeClass("is-hidden");
+                                $("#howMuch").removeClass("is-hidden");
+
+                                $("label[for='roomCode']").removeClass("is-hidden");
+                                $("label[for='howMany']").removeClass("is-hidden");
+                                $("label[for='howMuch']").removeClass("is-hidden");
+
+                                $("#message-title").text("객실 예약");
+                                return false;
+                            });
+
+                            /**
+                             * 객실 수정탭 클릭 이벤트 리스너
+                             */
+                            $(".reservationModifyTab").on("click", function () {
+                                $("#reservation").removeClass("is-hidden");
+                                $("#search").addClass("is-hidden");
+
+                                $(".reservationCancelTab").parent().removeClass("is-active");
+                                $(".reservationTab").parent().removeClass("is-active");
+                                $(".searchTab").parent().removeClass("is-active");
+                                $(".reservationModifyTab").parent().addClass("is-active");
+
+                                //버튼 레이블 변경
+                                $("#eventButton").text("수정");
+
+                                //객실 번호, 숙박 인원 숨기기
+                                $("#roomCode").addClass("is-hidden");
+                                $("#howMany").addClass("is-hidden");
+                                $("#howMuch").addClass("is-hidden");
+
+                                $("label[for='roomCode']").addClass("is-hidden");
+                                $("label[for='howMany']").addClass("is-hidden");
+                                $("label[for='howMuch']").addClass("is-hidden");
+
+                                $("#message-title").text("예약 수정");
+                                return false;
+                            });
+
+                            /**
+                             * 객실 취소탭 클릭 이벤트 리스너
+                             */
+                            $(".reservationCancelTab").on("click", function () {
+                                $("#reservation").removeClass("is-hidden");
+                                $("#search").addClass("is-hidden");
+
+                                $(".searchTab").parent().removeClass("is-active");
+                                $(".reservationModifyTab").parent().removeClass("is-active");
+                                $(".reservationTab").parent().removeClass("is-active");
+                                $(".reservationCancelTab").parent().addClass("is-active");
+
+                                $("#eventButton").text("취소");
+
+                                $("#roomCode").addClass("is-hidden");
+                                $("#howMany").addClass("is-hidden");
+                                $("#howMuch").addClass("is-hidden");
+
+                                $("label[for='roomCode']").addClass("is-hidden");
+                                $("label[for='howMany']").addClass("is-hidden");
+                                $("label[for='howMuch']").addClass("is-hidden");
+
+                                $("#message-title").text("예약 취소");
+                                return false;
+                            });
+                        });
+                    </script>
+                    <!-- //탭 변환 이벤트 리스너 -->
+
+                    <div class="message is-link">
+                        <div class="message-header">
+                            <p>객실 검색</p>
+                        </div>
+                        <div class="message-body">
+                            <div class="field">
+                                <label for="searchCheckin" class="label">체크인 날짜</label>
+                                <div class="control">
+                                    <input type="date" class="input" id="searchCheckin">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="searchCheckout" class="label">체크아웃 날짜</label>
+                                <div class="control">
+                                    <input type="date" class="input" id="searchCheckout">
+                                </div>
+                            </div>
+
+                            <div class="buttons mt-5">
+                                <button class="button is-link is-fullwidth" id="searchRoom">예약 가능한 객실 검색</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column is-hidden" id="reservation">
+                <div class="box">
+                    <div class="tabs">
+                        <ul>
+                            <li class="is-active"><a href="#" class="searchTab">객실 검색</a></li>
+                            <li><a href="#" class="reservationTab">객실 예약</a></li>
+                            <li><a href="#" class="reservationModifyTab">예약 수정</a></li>
+                            <li><a href="#" class="reservationCancelTab">예약 취소</a></li>
+                        </ul>
+                    </div>
+                    <div class="message is-link">
+                        <div class="message-header">
+                            <p id="message-title">객실 예약</p>
+                        </div>
+                        <div class="message-body">
+                            <form action="" method="">
+                                <!-- script -->
+                                <script>
+                                    $(document).ready(function () {
+
+                                        /**
+                                         * 최종 숙박비용 계산
+                                         * 1박 비용 * 숙박 기간(日)
+                                         */
+                                        $("#checkin, #checkout").on("change", function () {
+                                            let checkin = $("#checkin").val();
+                                            let checkout = $("#checkout").val();
+                                            if (checkin === "" || checkout === "") {
+                                                return false;
+                                            }
+                                            checkin = new Date(checkin);
+                                            checkout = new Date(checkout);
+
+                                            if (checkin > checkout) {
+                                                alert("체크인이 체크아웃보다 나중일 수 없습니다.");
+                                                return false;
+                                            }
+
+                                            const ms = Math.abs(checkout - checkin);
+                                            const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
+                                            const total = days * parseInt($("#howMuch").val());
+                                            $("#total").val(total);
+
+                                            return false;
+                                        });
+
+                                        /**
+                                         * 예약된 객실 테이블의 하나의 행을 클릭하면 예약 수정, 예약 취소 폼으로 값이 바인딩 된다.
+                                         */
+                                        $(document).on("click", "#booking>tbody>tr", function () {
+                                            const tds = $(this).children();
+                                            $("#name").val(tds.eq(0).text());
+                                            $("#checkin").val(tds.eq(2).text());
+                                            $("#checkout").val(tds.eq(3).text());
+                                            $("#total").val(tds.eq(4).text());
+                                            $("#mobile").val(tds.eq(5).text());
+                                        });
+
+                                        /**
+                                         * 예약 가능한 객실 테이블의 하나의 행을 클릭하면 객실 예약 폼으로 값이 바인딩 된다.
+                                         */
+                                        $(document).on("click", "#reservationPossibleRoomTable>tbody>tr", function () {
+                                            const tds = $(this).children();
+                                            $("#roomCode").val(tds.eq(0).text());
+                                            $("#name").val(tds.eq(1).text());
+                                            $("#howMany").val(tds.eq(3).text());
+                                            $("#howMuch").val(tds.eq(4).text());
+
+                                            let checkin = $("#checkin").val();
+                                            let checkout = $("#checkout").val();
+
+                                            checkin = new Date(checkin);
+                                            checkout = new Date(checkout);
+
+                                            const ms = Math.abs(checkout - checkin);
+                                            const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
+                                            const total = days * parseInt($("#howMuch").val());
+                                            $("#total").val(total);
+                                        });
+
+                                        /**
+                                         * 폼에서 값을 가져와서 booking 객체를 만들어서 반환한다.
+                                         */
+                                        function getBookingObject() {
+                                            const booking = {
+                                                roomCode: $("#roomCode").val(),
+                                                name: $("#name").val(),
+                                                checkin: $("#checkin").val(),
+                                                checkout: $("#checkout").val(),
+                                                total: $("#total").val(),
+                                                mobile: $("#mobile").val()
+                                            };
+
+                                            return booking;
+                                        }
+
+                                        function createReservationPossibleRoomTable(reservationPossibleRoomList) {
+                                            $("#reservationPossibleRoomTable>tbody").empty();
+                                            for (const reservationPossibleRoom of reservationPossibleRoomList) {
+                                                let tr = $("<tr></tr>");
+                                                tr.append(`<td>${reservationPossibleRoom.roomCode}</td>`);
+                                                tr.append(`<td>${reservationPossibleRoom.name}</td>`);
+                                                tr.append(`<td>${reservationPossibleRoom.typeName}</td>`);
+                                                tr.append(`<td>${reservationPossibleRoom.howMany}</td>`);
+                                                tr.append(`<td>${reservationPossibleRoom.howMuch}</td>`);
+                                                $("#reservationPossibleRoomTable>tbody").append(tr);
+                                            }
+                                        }
+
+                                        function createReservationNotPossibleRoomTable(reservationNotPossibleRoomList) {
+                                            $("#booking>tbody").empty();
+                                            for (const reservationNotPossibleRoom of reservationNotPossibleRoomList) {
+                                                let tr = $("<tr></tr>");
+                                                tr.append(`<td>${reservationNotPossibleRoom.name}</td>`);
+                                                tr.append(`<td>${reservationNotPossibleRoom.typeName}</td>`);
+                                                tr.append(`<td>${reservationNotPossibleRoom.checkin}</td>`);
+                                                tr.append(`<td>${reservationNotPossibleRoom.checkout}</td>`);
+                                                tr.append(`<td>${reservationNotPossibleRoom.total}</td>`);
+                                                tr.append(`<td>${reservationNotPossibleRoom.mobile}</td>`);
+                                                $("#booking>tbody").append(tr);
+                                            }
+                                        }
+
+                                        /**
+                                         * 예약 가능한 객실 버튼을 클릭했을 경우 이벤트 리스너 등록
+                                         * 클릭시 예약 가능한 객실 테이블, 예약된 객실 테이블 렌더링
+                                         */
+                                        $("#searchRoom").on("click", function () {
+                                            $("#reservationPossibleRoomTable>tbody").empty();
+                                            const checkin = $("#searchCheckin").val();
+                                            const checkout = $("#searchCheckout").val();
+
+                                            if (checkin === "" || checkout === "" || checkin > checkout) {
+                                                alert("체크인과 체크아웃을 확인해 주세요");
+                                                return false;
+                                            }
+
+                                            $("#checkin").val(checkin);
+                                            $("#checkout").val(checkout);
+
+
+                                            let url = `/booking/possible?checkin=${checkin}&checkout=${checkout}`;
+                                            $.getJSON(url, function (reservationPossibleRoomList) {
+                                                createReservationPossibleRoomTable(reservationPossibleRoomList);
+                                            });
+
+                                            $("#booking>tbody").empty();
+                                            url = `/booking/notPossible?checkin=${checkin}&checkout=${checkout}`;
+                                            $.getJSON(url, function (reservationNotPossibleRoomList) {
+                                                createReservationNotPossibleRoomTable(reservationNotPossibleRoomList);
+                                            });
+                                        });
+
+                                        /**
+                                         * 예약 버튼을 클릭하면 데이터베이스 BOOKING 테이블에 저장
+                                         */
+                                        function reservationEvent() {
+                                            const booking = getBookingObject();
+
+                                            for (const bookingKey in booking) {
+                                                console.log(booking[bookingKey]);
+                                            }
+
+                                            $.ajax({
+                                                type: "post",
+                                                url: "/booking/new",
+                                                data: JSON.stringify(booking),
+                                                contentType: "application/json; charset=utf-8",
+                                                success: function () {
+                                                    alert("예약에 성공했습니다.");
+                                                    const checkin = $("#checkin").val();
+                                                    const checkout = $("#checkout").val();
+                                                    const url = `/booking/notPossible?checkin=${checkin}&checkout=${checkout}`;
+                                                    $.getJSON(url, function (reservationNotPossibleRoomList) {
+                                                        createReservationNotPossibleRoomTable(reservationNotPossibleRoomList);
+                                                    });
+
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    alert(error);
+                                                }
+                                            });
+                                        }
+
+                                        /**
+                                         * 수정 버튼을 클릭하면 데이터베이스의 예약 정보 수정
+                                         */
+                                        function modifyEvent() {
+                                            const booking = getBookingObject();
+                                            $.ajax({
+                                                type: "patch",
+                                                url: "/booking/modify",
+                                                data: JSON.stringify(booking),
+                                                contentType: "application/json; charset=utf-8",
+                                                success: function () {
+                                                    alert("예약정보 수정에 성공했습니다.");
+                                                    const checkin = $("#checkin").val();
+                                                    const checkout = $("#checkout").val();
+                                                    const url = `/booking/notPossible?checkin=${checkin}&checkout=${checkout}`;
+                                                    $.getJSON(url, function (reservationNotPossibleRoomList) {
+                                                        createReservationNotPossibleRoomTable(reservationNotPossibleRoomList);
+                                                    });
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    if (error) {
+                                                        alert("예약정보 수정에 실패했습니다.");
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                        /**
+                                         * 취소 버튼을 클릭하면 데이터베이스의 예약 삭제
+                                         */
+                                        function removeEvent() {
+                                            const booking = getBookingObject();
+                                            $.ajax({
+                                                type: "delete",
+                                                url: "/booking/remove",
+                                                data: JSON.stringify(booking),
+                                                contentType: "application/json; charset=utf-8",
+                                                success: function () {
+                                                    alert("예약 취소에 성공했습니다.");
+                                                    const checkin = $("#checkin").val();
+                                                    const checkout = $("#checkout").val();
+                                                    const url = `/booking/notPossible?checkin=${checkin}&checkout=${checkout}`;
+                                                    $.getJSON(url, function (reservationNotPossibleRoomList) {
+                                                        createReservationNotPossibleRoomTable(reservationNotPossibleRoomList);
+                                                    });
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    if (error) {
+                                                        alert("예약 취소에 실패했습니다.");
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                        $("#eventButton").on("click", function () {
+                                            const event = $(this).text();
+                                            if (event === "예약") {
+                                                reservationEvent();
+                                            } else if (event === "수정") {
+                                                modifyEvent();
+                                            } else if (event === "취소") {
+                                                removeEvent();
+                                            }
+                                            return false;
+                                        });
+
+                                    });
+                                </script>
+                                <!-- //script -->
+                                <div class="field">
+                                    <label for="roomCode" class="label">객실 번호</label>
+                                    <div class="control">
+                                        <input type="text" class="input" id="roomCode" name="roomCode"
+                                               readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="name" class="label">객실 이름</label>
+                                    <div class="control">
+                                        <input type="text" class="input" id="name" name="name"
+                                               readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="checkin" class="label">체크인 날짜</label>
+                                    <div class="control">
+                                        <input type="date" id="checkin" name="checkin" class="input"
+                                               readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="checkout" class="label">체크아웃 날짜</label>
+                                    <div class="control">
+                                        <input type="date" id="checkout" name="checkout" class="input"
+                                               readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="howMany" class="label">숙박 인원</label>
+                                    <div class="control">
+                                        <input type="number" class="input" id="howMany" name="howMany" min="1" max="7">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="howMuch" class="label">1박 비용</label>
+                                    <div class="control">
+                                        <input type="input" class="input" id="howMuch" name="howMuch"
+                                               readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="total" class="label">최종 숙박요금</label>
+                                    <div class="control">
+                                        <input type="input" class="input" id="total" name="total" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="mobile" class="label">예약자 핸드폰 번호</label>
+                                    <div class="control">
+                                        <input type="tel" class="input" id="mobile" name="mobile"
+                                               placeholder="예약자의 핸드폰 번호를 입력해 주세요...">
+                                    </div>
+                                </div>
+                                <div class="buttons is-justify-content-center mt-5">
+                                    <button class="button is-link is-fullwidth" id="eventButton">예약</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is licensed
+                <a href="https://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+                is licensed <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+            </p>
+        </div>
+    </footer>
+</div>
+<!-- //container -->
+
+
+</body>
+</html>

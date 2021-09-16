@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" th:href="@{/css/bulma.css}">
+    <link rel="stylesheet" th:href="@{/css/font.css}">
+
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css}">
+
+    <script th:src="@{https://code.jquery.com/jquery-latest.min.js}"></script>
+    <script th:src="@{https://kit.fontawesome.com/223e8d4ffc.js}" crossorigin="anonymous"></script>
+    <title>객실 관리</title>
+</head>
+<body>
+<div class="container">
+
+    <!-- nav -->
+    <nav class="navbar is-white">
+        <div class="navbar-brand">
+            <a href="#" class="navbar-item has-text-weight-bold">
+                아이리스
+            </a>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a th:href="@{/hotel/admin/room}" href="#"
+                   class="navbar-item has-text-link has-text-weight-bold">객실 관리</a>
+                <a th:href="@{/hotel/admin/reservation}" href="#"
+                   class="navbar-item has-text-weight-bold">예약 관리</a>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <form th:action="@{/home/logout}" th:method="post">
+                            <button class="button is-info is-rounded is-inverted has-text-weight-bold">로그아웃</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- //nav -->
+
+    <div class="box has-background-white-bis mt-5">
+        <div class="box">
+            <div class="message is-link">
+                <div class="message-header">
+                    <p>객실 목록</p>
+                </div>
+                <div class="message-body">
+                    <table class="table is-hoverable is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th>객실 번호</th>
+                            <th>객실 이름</th>
+                            <th>객실 유형</th>
+                            <th>최대 인원</th>
+                            <th>1박 비용</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- AJAX 렌더링 -->
+                        <script>
+                            /**
+                             * 객실의 목록으로 테이블을 렌더링 해준다.
+                             * @param roomList
+                             */
+                            function createRoomTable(roomList) {
+                                $("tbody").empty();
+                                for (const roomListElement of roomList) {
+                                    let tr = $("<tr></tr>");
+                                    tr.append(`<td>${roomListElement.roomCode}</td>`);
+                                    tr.append(`<td>${roomListElement.name}</td>`);
+                                    tr.append(`<td>${roomListElement.roomType}</td>`);
+                                    tr.append(`<td>${roomListElement.howMany}</td>`);
+                                    tr.append(`<td>${roomListElement.howMuch}</td>`);
+                                    $("tbody").append(tr);
+                                }
+                            }
+
+                            //URL: 요청 URL
+                            //DATA: 요청시 서버로 전송되는 객체나 문자열 (없으면 생략 가능)
+                            //CALLBACK: 요청이 성공하면 실행되는 콜백 함수
+                            $.getJSON("/rooms", function (roomList) {
+                                createRoomTable(roomList);
+                            });
+                        </script>
+                        <!-- //AJAX 렌더링 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="box">
+            <!-- tabs -->
+            <div class="tabs">
+                <ul>
+                    <li class="is-active"><a href="#" id="register-tab">객실 등록</a></li>
+                    <li><a href="#" id="modify-tab">객실 수정</a></li>
+                    <li><a href="#" id="remove-tab">객실 삭제</a></li>
+                </ul>
+            </div>
+
+            <!-- script -->
+            <script>
+                $(document).ready(function () {
+                    /**
+                     * 폼의 객실 이름, 유형, 최대 인원, 1박 비용을 가지고
+                     * 객실 객체를 만들고 반환한다.
+                     */
+                    function getRoomObject() {
+                        const room = {
+                            roomCode: $("#roomCode").val(),
+                            name: $("#name").val(),
+                            type: $("#type option:selected").val(),
+                            howMuch: $("#howMuch").val(),
+                            howMany: $("#howMany").val()
+                        };
+                        return room;
+                    }
+
+                    /**
+                     * 등록 버튼을 클릭했을 경우의 이벤트 리스너
+                     */
+                    function registerButtonClickEvent() {
+                        const room = getRoomObject();
+                        $.ajax({
+                            type: "post",
+                            url: "/rooms/new",
+                            data: JSON.stringify(room),
+                            contentType: "application/json; charset=utf-8",
+                            success: function () {
+                                alert("등록에 성공했습니다.");
+
+                                //추가 완료 후 새로 갱신된 객실 테이블을 보여준다.
+                                $.getJSON("/rooms", function (roomList) {
+                                    createRoomTable(roomList);
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                if (error) {
+                                    alert("등록에 실패했습니다.");
+                                }
+                            }
+                        });
+                    }
+
+                    /**
+                     * 수정 버튼을 클릭했을 경우의 이벤트 리스너
+                     */
+                    function modifyButtonClickEvent() {
+                        const room = getRoomObject();
+                        $.ajax({
+                            type: "patch",
+                            url: `/rooms/${room.roomCode}`,
+                            data: JSON.stringify(room),
+                            contentType: "application/json; charset=utf-8",
+                            success: function () {
+                                alert("수정에 성공했습니다.");
+                                $.getJSON("/rooms", function (roomList) {
+                                    createRoomTable(roomList);
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                if (error) {
+                                    alert("수정에 실패했습니다.");
+                                }
+                            }
+                        });
+                    }
+
+                    /**
+                     * 삭제 버튼을 클릭했을 경우의 이벤트 리스너
+                     */
+                    function removeButtonClickEvent() {
+                        const room = getRoomObject();
+                        $.ajax({
+                            type: "delete",
+                            url: `/rooms/${room.roomCode}`,
+                            success: function () {
+                                alert("삭제에 성공했습니다.");
+                                $.getJSON("/rooms", function (roomList) {
+                                    createRoomTable(roomList);
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                if (error) {
+                                    alert("삭제에 실패했습니다.");
+                                }
+                            }
+                        });
+                    }
+
+                    /**
+                     * 모든 .tabs>ul 의 is-active 클래스를 제거한다.
+                     */
+                    function removeAllIsActiveClass() {
+                        $(".tabs>ul").children().each(function () {
+                            if ($(this).attr("class") === "is-active") {
+                                $(this).removeClass("is-active");
+                            }
+                        });
+                    }
+
+                    /**
+                     * 클릭한 tabs 의 활성화를 위한 is-active 클래스를 추가한다.
+                     */
+                    $(".tabs>ul>li>a").on("click", function () {
+                        removeAllIsActiveClass();
+                        $(this).parent().addClass("is-active");
+                        return false;
+                    });
+
+                    /**
+                     * 등록탭과 수정탭을 클릭했을 경우의 공통 이벤트 리스너 등록 ( 화면 렌더링 )
+                     */
+                    $("#register-tab, #modify-tab").on("click", function () {
+                        $("#name").removeAttr("readonly");
+                        $("#type").removeAttr("readonly");
+                        $("#howMuch").removeAttr("readonly");
+                        $("#howMany").removeAttr("readonly");
+                    });
+
+                    /**
+                     * 등록탭을 클릭했을 경우의 이벤트 리스너 등록 ( 화면 렌더링 )
+                     */
+                    $("#register-tab").on("click", function () {
+                        $("#roomCodeField").addClass("is-hidden");
+                        $("#eventButton").text("등록");
+                    });
+
+                    /**
+                     * 수정탭을 클릭했을 경우의 이벤트 리스너 등록 ( 화면 렌더링 )
+                     */
+                    $("#modify-tab").on("click", function () {
+                        $("#roomCodeField").removeClass("is-hidden");
+                        $("#eventButton").text("수정");
+                    });
+
+                    /**
+                     *  삭제탭을 클릭했을 경우의 이벤트 리스너 등록 ( 화면 렌더링 )
+                     */
+                    $("#remove-tab").on("click", function () {
+                        $("#eventButton").text("삭제");
+                        $("#roomCodeField").removeClass("is-hidden");
+                        $("#name").attr("readonly", "readonly");
+                        $("#type").attr("readonly", "readonly");
+                        $("#howMany").attr("readonly", "readonly");
+                        $("#howMuch").attr("readonly", "readonly");
+                    });
+
+                    /**
+                     * 렌더링 된 테이블의 행을 클릭하면
+                     * 아래의 폼으로 값이 전달된다.
+                     */
+                    $(document).on("click", "table>tbody>tr", function () {
+                        const tds = $(this).children();
+                        $("#roomCode").val($(tds).eq(0).text());
+                        $("#name").val($(tds).eq(1).text());
+                        $("#type").children().each(function () {
+                            const option = $(this);
+                            if (option.text() === $(tds).eq(2).text()) {
+                                $(option).attr("selected", true);
+                            }
+                        });
+                        $("#howMany").val($(tds).eq(3).text());
+                        $("#howMuch").val($(tds).eq(4).text());
+                    })
+
+                    $("#eventButton").on("click", function () {
+                        const buttonText = $(this).text();
+                        if (buttonText === "등록") {
+                            registerButtonClickEvent();
+                        } else if (buttonText === "수정") {
+                            modifyButtonClickEvent();
+                        } else if (buttonText === "삭제") {
+                            removeButtonClickEvent();
+                        }
+                    });
+                });
+            </script>
+            <!-- //script -->
+
+            <!-- //tabs -->
+            <form class="message is-link">
+                <div class="message-header">
+                    <p>객실 등록</p>
+                    <div class="buttons is-justify-content-flex-end">
+                        <button class="button is-white is-rounded has-text-link-dark" type="reset">초기화</button>
+                    </div>
+                </div>
+                <div class="message-body">
+                    <div class="box">
+                        <div class="field is-hidden" id="roomCodeField">
+                            <label for="roomCode" class="label">객실 번호</label>
+                            <div class="control">
+                                <input type="text" class="input" id="roomCode" name="roomCode" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="name" class="label">객실 이름</label>
+                            <div class="control">
+                                <input type="text" class="input" id="name" name="name" required="required">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="type" class="label">객실 유형</label>
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select name="type" id="type">
+                                        <option th:each="roomType, state : ${roomTypeList}"
+                                                th:value="${roomType.typeCode}" th:text="${roomType.name}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="howMany" class="label">최대 인원</label>
+                            <div class="control">
+                                <input type="number" class="input" id="howMany" name="howMany"
+                                       min="1" max="7" required="required">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="howMuch" class="label">1박 비용</label>
+                            <div class="control">
+                                <input type="number" class="input" id="howMuch" name="howMuch"
+                                       min="0" required="required">
+                            </div>
+                        </div>
+
+                        <div class="buttons">
+                            <button type="button" id="eventButton" class="button is-link is-fullwidth">등록</button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+
+    <!--  footer  -->
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is licensed
+                <a href="https://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+                is licensed <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+            </p>
+        </div>
+    </footer>
+    <!--  //footer  -->
+
+
+</div>
+
+</body>
+</html>

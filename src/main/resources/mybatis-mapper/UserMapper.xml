@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.coldrain.hotel_isu.mapper.user.UserMapper">
+    <select id="findByAll" resultType="User">
+        SELECT *
+        FROM TBL_USER
+    </select>
+
+    <select id="findByLoginId" resultType="User">
+        SELECT *
+        FROM TBL_USER
+        WHERE LOGINID = #{loginId}
+    </select>
+
+    <insert id="save">
+        <![CDATA[
+        INSERT INTO TBL_USER (NAME, LOGINID, PASSWORD, MOBILE, ROLE)
+        VALUES (#{name}, #{loginId}, #{password}, #{mobile}, 'USER')
+        ]]>
+        <selectKey keyProperty="id" resultType="long" order="AFTER">
+            SELECT TBL_USER_SEQ.CURRVAL FROM DUAL
+        </selectKey>
+    </insert>
+</mapper>
+

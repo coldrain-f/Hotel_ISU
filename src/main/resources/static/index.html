@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="css/bulma.css">
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="box">
+        <h3 class="title is-3 has-text-centered">Welcome Page</h3>
+        <div class="buttons is-justify-content-center mt-6">
+            <button class="button is-primary" id="loginButton">로그인</button>
+            <button class="button is-danger" id="joinButton">회원가입</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#loginButton").on("click", function () {
+            location.href = "/home/login";
+        });
+
+        $("#joinButton").on("click", function () {
+            location.href = "/home/join";
+        });
+    })
+</script>
+
+
+</body>
+</html>
